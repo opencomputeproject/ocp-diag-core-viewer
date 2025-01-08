@@ -1,10 +1,10 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
-import {ResultRecord, ResultRecordService} from '../services/result_record_service';
-import {SEVERITIES, Severity} from '../services/results_type';
-import {TestRunService} from '../services/testrun_service';
+import { ResultRecord, ResultRecordService } from '../services/result_record_service';
+import { SEVERITIES, Severity } from '../services/results_type';
+import { TestRunService } from '../services/testrun_service';
 
 /**
  *  The log view page.
@@ -40,13 +40,17 @@ export class LogsViewComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-      private readonly service: ResultRecordService,
-      private readonly testrunService: TestRunService) {}
+    private readonly service: ResultRecordService,
+    private readonly testrunService: TestRunService) { }
 
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.loadResultRecords();
+    this.service.dataReady$.subscribe(newVal => {
+      if (newVal) {
+        this.loadResultRecords();
+      }
+    })
   }
 
   loadResultRecords() {
@@ -62,7 +66,7 @@ export class LogsViewComponent implements AfterViewInit {
       return '';
     }
     return this.testrunService
-        .getTestStep(record.raw.testStepArtifact.testStepId)
-        .name;
+      .getTestStep(record.raw.testStepArtifact.testStepId)
+      .name;
   }
 }

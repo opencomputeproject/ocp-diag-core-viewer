@@ -1,26 +1,28 @@
 <!-- Summary bar -->
-<summary-bar [name]="testrun.name" [version]="testrun.version" [startTime]="testrun.startTime" [status]="testrun.status"
-  [result]="testrun.result">
-</summary-bar>
-<!-- Summary table -->
-<key-value-table [dataSource]="summary" id="summary-table"></key-value-table>
+<ng-container *ngIf="dataReady$ | async">
+  <summary-bar [name]="testrun.name" [version]="testrun.version" [startTime]="testrun.startTime"
+    [status]="testrun.status" [result]="testrun.result">
+  </summary-bar>
+  <!-- Summary table -->
+  <key-value-table [dataSource]="summary" id="summary-table"></key-value-table>
 
-<!-- Errors title bar -->
-<session-title-bar title="Errors" [badge]="errorsDataSource.data.length">
-</session-title-bar>
-<!--- Errors table -->
-<errors-table [dataSource]="errorsDataSource"></errors-table>
+  <!-- Errors title bar -->
+  <session-title-bar title="Errors" [badge]="errorsDataSource.data.length">
+  </session-title-bar>
+  <!--- Errors table -->
+  <errors-table [dataSource]="errorsDataSource"></errors-table>
 
-<!-- Hardware components title bar -->
-<session-title-bar title="Hardware Components"></session-title-bar>
-<!-- Hardware components table -->
-<testrun-hardware-components></testrun-hardware-components>
+  <!-- Hardware components title bar -->
+  <session-title-bar title="Hardware Components"></session-title-bar>
+  <!-- Hardware components table -->
+  <testrun-hardware-components></testrun-hardware-components>
 
-<!-- Software infos title bar -->
-<session-title-bar title="Software Infos"></session-title-bar>
-<!-- Software infos table -->
-<testrun-software-infos></testrun-software-infos>
+  <!-- Software infos title bar -->
+  <session-title-bar title="Software Infos"></session-title-bar>
+  <!-- Software infos table -->
+  <testrun-software-infos></testrun-software-infos>
 
-<!-- Platform Infos -->
-<session-title-bar title="Platform Infos"></session-title-bar>
-<testrun-platform-infos></testrun-platform-infos>
+  <!-- Platform Infos -->
+  <session-title-bar title="Platform Infos"></session-title-bar>
+  <testrun-platform-infos></testrun-platform-infos>
+</ng-container>

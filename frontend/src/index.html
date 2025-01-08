@@ -22,6 +22,40 @@
     https://github.com/angular/angular/issues/13948#issuecomment-273833138
   -->
   <script>document.write('<base href="' + document.location + '" />');</script>
+  <script>
+    let OCP_DIAG_RESULT_RECORDS = [];
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const pathnameParts = url.pathname.split('/');
+    const viewIndex = pathnameParts.indexOf('view');
+    // the id of the file requested should be right after 'view'
+    const id = pathnameParts[viewIndex + 1];
+    fetch('/view/result/' + id).then(response => {
+      const reader = response.body.getReader();
+      let chunks = [];
+
+      function read() {
+        return reader.read().then(({ done, value }) => {
+          if (done) {
+            // All chunks received, process the data
+            const blob = new Blob(chunks);
+            blob.text().then(content => {
+              const data = content.split("\n");
+
+              data.forEach(element => {
+                if (element.length > 0) OCP_DIAG_RESULT_RECORDS.push(JSON.parse(element));
+              });
+              window.dispatchEvent(new Event('dataReady'));
+            })
+            return;
+          }
+          chunks.push(value);
+          read(); // Read the next chunk
+        });
+      }
+      read();
+    }).catch(err => { console.log(err); });
+  </script>
 
 </body>
 

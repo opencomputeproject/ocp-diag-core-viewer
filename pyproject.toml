@@ -83,9 +83,6 @@ line_length = 80
 [tool.black]
 line-length = 80
 
-[tool.pdm.scripts.insert-ocp-diag-result-tag]
-call = "viewer.server.insert_ocp_diag_result_data:insert_ocp_diag_result_data"
-
 [tool.pdm.scripts.remove-static-for-client]
 call = "viewer.client.remove_static_path:remove_static_path"
 
@@ -103,7 +100,6 @@ shell = """
     cp static/polyfills.js viewer/client/files/polyfills.js
     cp static/runtime.js viewer/client/files/runtime.js
     cp static/styles.css viewer/client/files/styles.css
-    pdm run insert-ocp-diag-result-tag
     pdm run remove-static-for-client
 """
 

@@ -1,25 +1,16 @@
 <div class="measurements">
   <!-- Measurement series selector -->
-  <mat-form-field appearance="outline"
-    *ngIf="showSeries"
-    class="series-selector"
-  >
+  <mat-form-field appearance="outline" *ngIf="showSeries" class="series-selector">
     <mat-label>Series</mat-label>
-    <mat-select
-      [(value)]="selectedSeriesId"
-    (selectionChange)="loadMeasurementsComponent()"
-    >
+    <mat-select [(value)]="selectedSeriesId" (selectionChange)="loadMeasurementsComponent()">
       <mat-option>-- None --</mat-option>
-      <mat-option
-        [value]="option.measurementSeriesId"
-        *ngFor="let option of measurementSeriesOptions">
+      <mat-option [value]="option.measurementSeriesId" *ngFor="let option of measurementSeriesOptions">
         {{ option.text }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <table mat-table matSort
-    [dataSource]="measurementsDataSource"
+  <table mat-table matSort [dataSource]="measurementsTableDataSource.data"
     (matSortChange)="sortMeasurementsComponent($event)">
 
     <!-- Id -->
@@ -57,7 +48,7 @@
       <th mat-header-cell *matHeaderCellDef>Hardware Info</th>
       <td mat-cell *matCellDef="let element">
         <a *ngIf="element.hardwareInfoId" (click)="sideInfoService.showHardwareInfo(element.hardwareInfoId)">
-            {{getHardwareInfoName(element.hardwareInfoId)}}
+          {{getHardwareInfoName(element.hardwareInfoId)}}
         </a>
       </td>
     </ng-container>
@@ -91,4 +82,7 @@
       <td class="mat-cell" colspan="100">No data available</td>
     </tr>
   </table>
+  <mat-paginator [length]="totalDataLength" [pageSize]="currentPageSize" [pageIndex]="currentPage"
+    [pageSizeOptions]="[50, 100, 200, 300]" (page)="onPaginateChange($event)" showFirstLastButtons>
+  </mat-paginator>
 </div>

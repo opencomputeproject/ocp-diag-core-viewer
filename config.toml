@@ -5,6 +5,7 @@ DEBUG = true
 # Storage
 # Name of the bucket on Google Cloud Storage
 # STORAGE_GCS_BUCKET_NAME = "bucket_name"
+# CONTENT_SIZE_LIMIT_MB = 0
 
 # Upload
 # Allowed urls for uploading.

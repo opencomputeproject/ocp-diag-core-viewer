@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -7,6 +7,7 @@ import { Error } from '../services/results_type';
 import { SideInfoService } from '../services/side_info_service';
 import { TestRun, TestRunService } from '../services/testrun_service';
 import { timeDiff } from '../utility/utils';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  *  The testrun view page
@@ -20,27 +21,33 @@ import { timeDiff } from '../utility/utils';
   styleUrls: ['./testrun_view.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TestRunViewComponent implements AfterViewInit, OnInit {
+export class TestRunViewComponent implements OnInit {
   testrun: TestRun;
   summary: Array<[string, unknown]> = [];
-  errorsDataSource: MatTableDataSource<Error>;
-
+  errorsDataSource!: MatTableDataSource<Error>;
   @ViewChild(MatSort) errorsSort!: MatSort;
-
+  private dataReadySubject = new BehaviorSubject<boolean>(false);
+  dataReady$ = this.dataReadySubject.asObservable();
   ngOnInit() {
     // do nothing
   }
-
+  updateDataReady(newData: boolean) {
+    this.dataReadySubject.next(newData);
+  }
   constructor(
     private readonly testrunService: TestRunService,
     readonly sideInfoService: SideInfoService) {
     this.testrun = this.testrunService.get();
-    this.errorsDataSource = new MatTableDataSource(this.testrun.errors);
-    this.initSummary();
-  }
-
-  ngAfterViewInit() {
-    this.errorsDataSource.sort = this.errorsSort;
+    this.testrunService.dataReady$.subscribe(newVal => {
+      if (newVal) {
+        const testrun = this.testrunService.get();
+        this.testrun = testrun;
+        this.errorsDataSource = new MatTableDataSource(testrun.errors);
+        this.initSummary();
+        this.errorsDataSource.sort = this.errorsSort;
+        this.dataReadySubject.next(newVal);
+      }
+    });
   }
 
   getSoftwareInfoName(softwareId: number) {
@@ -57,9 +64,9 @@ export class TestRunViewComponent implements AfterViewInit, OnInit {
     this.summary.push(['Result', testrun.result]);
     this.summary.push(['Host name', this.getHostNames().join(', ')]);
     this.summary.push(
-      ['Start Time', formatDate(testrun.startTime, 'full', 'en-us')]);
+      ['Start Time', testrun.startTime ? formatDate(testrun.startTime, 'full', 'en-us') : ""]);
     this.summary.push(
-      ['End Time', formatDate(testrun.endTime, 'full', 'en-us')]);
+      ['End Time', testrun.endTime ? formatDate(testrun.endTime, 'full', 'en-us') : ""]);
     this.summary.push(
       ['Duration', timeDiff(testrun.startTime, testrun.endTime)]);
     this.summary.push(['Parameters', testrun.parameters]);

@@ -154,13 +154,14 @@ def html(
     """
     index_html_soup = bs4.BeautifulSoup(index_html_content, "html.parser")
 
-    ocp_diag_test_data_js = build_ocp_diag_test_data_js(ocp_diag_data_content)
+    ocp_diag_test_data_js = "const OCP_DIAG_RESULT_RECORDS = [{}];".format(
+        ",".join(build_ocp_diag_test_data_js(ocp_diag_data_content))
+    )
 
     index_html_soup.find("script", attrs={"src": "/scripts.js"}).extract()
     ocp_diag_test_data_tag = index_html_soup.new_tag("script")
     ocp_diag_test_data_tag.string = ocp_diag_test_data_js
     index_html_soup.find("body").append(ocp_diag_test_data_tag)
-
     html_replace_external_files(
         index_html_soup,
         app_bundle_content,

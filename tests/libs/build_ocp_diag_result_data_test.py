@@ -36,5 +36,5 @@ def testBuildTestDataJs_Success():
             build_ocp_diag_result_data.build_ocp_diag_test_data_js(
                 meltan_data_content
             )
-            == "const OCP_DIAG_RESULT_RECORDS = [{},{}];"
+            == ["{}","{}"]
         )

@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {TestRun, TestRunService} from '../services/testrun_service';
+import { TestRun, TestRunService } from '../services/testrun_service';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  *  The Teststeps view page
@@ -15,8 +16,16 @@ import {TestRun, TestRunService} from '../services/testrun_service';
 })
 export class TestStepsViewComponent {
   testrun: TestRun;
+  private dataReadySubject = new BehaviorSubject<boolean>(false);
+  dataReady$ = this.dataReadySubject.asObservable();
 
   constructor(private readonly testrunService: TestRunService) {
     this.testrun = this.testrunService.get();
+    this.testrunService.dataReady$.subscribe(newVal => {
+      if (newVal) {
+        this.testrun = this.testrunService.get();
+        this.dataReadySubject.next(newVal);
+      }
+    });
   }
 }

@@ -1,47 +1,50 @@
-<!-- Summary bar -->
-<summary-bar *ngIf="teststep" [name]="teststep.name" [startTime]="teststep.startTime" [status]="teststep.status">
-</summary-bar>
+<div *ngIf="dataReady$ | async as dataReady">
+  <!-- Summary bar -->
+  <summary-bar *ngIf="testStep" [name]="testStep.name" [startTime]="testStep.startTime" [status]="testStep.status">
+  </summary-bar>
 
 
-<mat-tab-group animationDuration="0ms" class="teststep-tabs">
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <span matBadge="{{ errorsCount }}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
-        matBadgeHidden="{{ errorsCount === 0 }}">
-        TESTSTEP
-      </span>
-    </ng-template>
-    <teststeps-teststep-summary [testStepId]="testStepId">
-    </teststeps-teststep-summary>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <span matBadge="{{diagnosesFailCount}}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
-        matBadgeHidden="{{ diagnosesFailCount === 0 }}">
-        DIAGNOSES
-      </span>
-    </ng-template>
-    <teststeps-teststep-diagnoses [testStepId]="testStepId">
-    </teststeps-teststep-diagnoses>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <span matBadge="{{measuremntsInvalidCount}}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
-        matBadgeHidden="{{measuremntsInvalidCount === 0}}">
-        MEASUREMENTS
-      </span>
-    </ng-template>
-    <teststeps-teststep-measurements [dataSource]="measurementsDataSource">
-    </teststeps-teststep-measurements>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <span matBadge="{{measurementSeriesInvalidCount}}" matBadgeSize="small" matBadgeColor="warn"
-        matBadgeOverlap="false" matBadgeHidden="{{measurementSeriesInvalidCount === 0}}">
-        MEASUREMENT SERIES
-      </span>
-    </ng-template>
-    <teststeps-teststep-measurements [dataSource]="measurementSeriesDataSource" [showSeries]="true">
-    </teststeps-teststep-measurements>
-  </mat-tab>
-</mat-tab-group>
+  <mat-tab-group animationDuration="0ms" class="teststep-tabs">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matBadge="{{ errorsCount }}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
+          matBadgeHidden="{{ errorsCount === 0 }}">
+          TESTSTEP
+        </span>
+      </ng-template>
+      <teststeps-teststep-summary [testStepId]="testStepId">
+      </teststeps-teststep-summary>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matBadge="{{diagnosesFailCount}}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
+          matBadgeHidden="{{ diagnosesFailCount === 0 }}">
+          DIAGNOSES
+        </span>
+      </ng-template>
+      <teststeps-teststep-diagnoses [testStepId]="testStepId">
+      </teststeps-teststep-diagnoses>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matBadge="{{measuremntsInvalidCount}}" matBadgeSize="small" matBadgeColor="warn" matBadgeOverlap="false"
+          matBadgeHidden="{{measuremntsInvalidCount === 0}}">
+          MEASUREMENTS
+        </span>
+      </ng-template>
+      <teststeps-teststep-measurements [dataSource]="measurementsDataSource">
+      </teststeps-teststep-measurements>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matBadge="{{measurementSeriesInvalidCount}}" matBadgeSize="small" matBadgeColor="warn"
+          matBadgeOverlap="false" matBadgeHidden="{{measurementSeriesInvalidCount === 0}}">
+          MEASUREMENT SERIES
+        </span>
+      </ng-template>
+      <teststeps-teststep-measurements [dataSource]="measurementSeriesDataSource" [showSeries]="true"
+        [measurementSeriesInfos]="testStep ? testStep.measurementSeriesInfos : {}">
+      </teststeps-teststep-measurements>
+    </mat-tab>
+  </mat-tab-group>
+</div>

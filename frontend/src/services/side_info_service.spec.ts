@@ -1,8 +1,8 @@
-import {SideInfoEvent, SideInfoService} from './side_info_service';
+import { SideInfoEvent, SideInfoService } from './side_info_service';
 
 describe('Side Info Service', () => {
   const testrunService =
-      jasmine.createSpyObj('mockResultRecordService', ['get']);
+    jasmine.createSpyObj('mockResultRecordService', ['get']);
   it('should be created', () => {
     testrunService.get.and.returnValue([{}]);
     const service = new SideInfoService(testrunService);

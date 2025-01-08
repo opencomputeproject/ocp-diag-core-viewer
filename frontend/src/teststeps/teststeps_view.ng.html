@@ -1,11 +1,7 @@
 <!-- Summary bar -->
-<summary-bar
-  [name]="testrun.name"
-  [version]="testrun.version"
-  [startTime]="testrun.startTime"
-  [status]="testrun.status"
-  [result]="testrun.result"
-  >
-</summary-bar>
-
-<teststeps-list></teststeps-list>
+<div *ngIf="dataReady$ | async as dataReady">
+  <summary-bar [name]="testrun.name" [version]="testrun.version" [startTime]="testrun.startTime"
+    [status]="testrun.status" [result]="testrun.result">
+  </summary-bar>
+  <teststeps-list></teststeps-list>
+</div>

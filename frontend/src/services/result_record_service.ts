@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { OutputArtifact, SEVERITIES, Severity } from './results_type';
+import { BehaviorSubject } from 'rxjs';
 
 /** The category list of meltan result records. */
 export const CATEGORIES = [
@@ -35,9 +36,11 @@ export declare interface ResultRecord {
 }
 
 // OCP_DIAG_RESULT_RECORDS is from OCP_DIAG_RESULT_RECORDS.js.
-declare let OCP_DIAG_RESULT_RECORDS: ResultRecord[] | undefined;
+declare let OCP_DIAG_RESULT_RECORDS: ResultRecord[];
 /** A service that provides the meltan result records. */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ResultRecordService {
   /**
    * Gets result records.
@@ -47,9 +50,26 @@ export class ResultRecordService {
    * category or message.
    * @return The meltan result records.
    */
+  private dataReadySubject = new BehaviorSubject<boolean>(false);
+  dataReady$ = this.dataReadySubject.asObservable();
+  constructor() {
+    this.dataReadySubject.next(OCP_DIAG_RESULT_RECORDS.length > 0);
+    window.addEventListener("dataReady", this.handleDataUpdate.bind(this));
+  }
+  updateData(newData: boolean) {
+    this.dataReadySubject.next(newData);
+  }
+  handleDataUpdate() {
+    if (OCP_DIAG_RESULT_RECORDS.length > 0) {
+      this.updateData(true);
+    }
+  }
+  ngOnDestroy() {
+    window.removeEventListener("dataReady", this.handleDataUpdate.bind(this));
+  }
   get(severityFilter: Severity = 'TRACE',
     searchKeyword = ''): ResultRecord[] {
-    if (OCP_DIAG_RESULT_RECORDS == null) {
+    if (OCP_DIAG_RESULT_RECORDS.length == 0) {
       return [];
     }
     const data: ResultRecord[] = [];
@@ -61,9 +81,9 @@ export class ResultRecordService {
         continue;
       }
       // Filter by search keyword.
-      if (searchKeyword.length === 0 || record.stage.includes(searchKeyword) ||
-        record.category.includes(searchKeyword) ||
-        record.message.includes(searchKeyword)) {
+      if (searchKeyword.length === 0 || (!!record.stage && record.stage.includes(searchKeyword)) ||
+        (!!record.category && record.category.includes(searchKeyword)) ||
+        (!!record.message && record.message.includes(searchKeyword))) {
         data.push(record);
       }
     }

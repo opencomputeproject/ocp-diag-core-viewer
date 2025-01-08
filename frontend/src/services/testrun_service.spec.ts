@@ -1,7 +1,10 @@
-import {ResultRecordService} from './result_record_service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ResultRecordService } from './result_record_service';
 import * as results from './results_type';
-import {TestRunService} from './testrun_service';
+import { TestRunService } from './testrun_service';
 
+const dataReadySubject = new BehaviorSubject<boolean>(false);
+const dataReady$ = dataReadySubject.asObservable();
 describe('TestRun Service', () => {
   it('should be created', () => {
     const service = new TestRunService(new ResultRecordService());
@@ -60,7 +63,7 @@ const startRunRecord = {
 
 describe('TestRun Service: testRunArtifact', () => {
   const recordService =
-      jasmine.createSpyObj('mockResultRecordService', ['get']);
+    jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
   it('should support testRunStart', () => {
     recordService.get.and.returnValue([startRunRecord]);
 
@@ -70,7 +73,7 @@ describe('TestRun Service: testRunArtifact', () => {
     expect(testrun.name).toEqual('myTest');
     expect(testrun.version).toEqual('399701328');
     expect(testrun.startTime).toEqual('2021-10-12T14:09:43.549303038Z');
-    expect(testrun.parameters).toEqual({'key': 'value'});
+    expect(testrun.parameters).toEqual({ 'key': 'value' });
     expect(Object.keys(testrun.hardwareInfos)).toEqual(['0']);
     expect(testrun.hardwareInfos['0'].hostname).toEqual('TestHost');
     expect(testrun.hardwareInfos['0'].name).toEqual('myName');
@@ -86,7 +89,7 @@ describe('TestRun Service: testRunArtifact', () => {
       'raw': {
         'sequenceNumber': 33,
         'testRunArtifact': {
-          'testRunEnd': {'name': 'myTest', 'result': 'FAIL', 'status': 'ERROR'}
+          'testRunEnd': { 'name': 'myTest', 'result': 'FAIL', 'status': 'ERROR' }
         },
         'timestamp': '2021-10-12T14:09:43.563567905Z'
       },
@@ -142,7 +145,7 @@ describe('TestRun Service: testRunArtifact', () => {
       'message': 'tag message',
       'raw': {
         'sequenceNumber': 5,
-        'testRunArtifact': {'tag': {'tag': 'tag message'}},
+        'testRunArtifact': { 'tag': { 'tag': 'tag message' } },
         'timestamp': '2021-10-12T14:09:43.548764032Z'
       },
       'sequenceNumber': 5,
@@ -165,7 +168,7 @@ const startStepRecord = {
   'raw': {
     'sequenceNumber': 7,
     'testStepArtifact':
-        {'testStepId': '0', 'testStepStart': {'name': 'my_first_step'}},
+      { 'testStepId': '0', 'testStepStart': { 'name': 'my_first_step' } },
     'timestamp': '2021-10-12T14:09:43.550786077Z'
   },
   'sequenceNumber': 7,
@@ -177,7 +180,7 @@ const startStepRecord = {
 
 describe('TestRun Service: testStepArtifact', () => {
   const recordService =
-      jasmine.createSpyObj('mockResultRecordService', ['get']);
+    jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
 
   it('should support testStepStart', () => {
     recordService.get.and.returnValue([startStepRecord]);
@@ -188,7 +191,7 @@ describe('TestRun Service: testStepArtifact', () => {
     expect(Object.keys(testrun.steps)).toEqual(['0']);
     expect(testrun.steps['0'].name).toEqual('my_first_step');
     expect(testrun.steps['0'].startTime)
-        .toEqual('2021-10-12T14:09:43.550786077Z');
+      .toEqual('2021-10-12T14:09:43.550786077Z');
   });
 
   it('should support testStepEnd', () => {
@@ -200,7 +203,7 @@ describe('TestRun Service: testStepArtifact', () => {
         'raw': {
           'sequenceNumber': 32,
           'testStepArtifact': {
-            'testStepEnd': {'name': 'my_first_step', 'status': 'COMPLETE'},
+            'testStepEnd': { 'name': 'my_first_step', 'status': 'COMPLETE' },
             'testStepId': '0'
           },
           'timestamp': '2021-10-12T14:09:43.563272217Z'
@@ -228,7 +231,7 @@ describe('TestRun Service: testStepArtifact', () => {
         'raw': {
           'sequenceNumber': 32,
           'testStepArtifact': {
-            'testStepEnd': {'name': 'my_first_step', 'status': 'COMPLETE'},
+            'testStepEnd': { 'name': 'my_first_step', 'status': 'COMPLETE' },
             'testStepId': '0'
           },
           'timestamp': '2021-10-12T14:09:43.563272217Z'
@@ -844,7 +847,7 @@ describe('TestRun Service: testStepArtifact', () => {
               'description': 'This is a test file :)',
               'isSnapshot': false,
               'outputPath': 'simple_meltan_test_file.txt',
-              'tags': [{'tag': 'meltan_example'}],
+              'tags': [{ 'tag': 'meltan_example' }],
               'displayName': 'test_file'
             },
             'testStepId': '0'
@@ -867,7 +870,7 @@ describe('TestRun Service: testStepArtifact', () => {
       'description': 'This is a test file :)',
       'isSnapshot': false,
       'outputPath': 'simple_meltan_test_file.txt',
-      'tags': [{'tag': 'meltan_example'}],
+      'tags': [{ 'tag': 'meltan_example' }],
       'displayName': 'test_file'
     });
   });
@@ -883,7 +886,7 @@ describe('TestRun Service: testStepArtifact', () => {
           'sequenceNumber': 22,
           'testStepArtifact': {
             'extension': {
-              'extension': {'key': 'value'},
+              'extension': { 'key': 'value' },
               'name': 'example-artifact-extention1'
             },
             'testStepId': '0'
@@ -902,7 +905,7 @@ describe('TestRun Service: testStepArtifact', () => {
 
     expect(teststep.extensions.length).toEqual(1);
     expect(teststep.extensions[0]).toEqual({
-      'extension': {'key': 'value'},
+      'extension': { 'key': 'value' },
       'name': 'example-artifact-extention1'
     });
   });
@@ -910,7 +913,7 @@ describe('TestRun Service: testStepArtifact', () => {
 
 describe('TestRun Service: utilizations', () => {
   const recordService =
-      jasmine.createSpyObj('mockResultRecordService', ['get']);
+    jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
 
   it('getTeststep() should return TestStep', () => {
     recordService.get.and.returnValue([

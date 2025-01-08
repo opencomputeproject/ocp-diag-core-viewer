@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { ResultRecord, ResultRecordService } from "./result_record_service";
 import * as results from "./results_type";
+import { BehaviorSubject } from "rxjs";
 
 /** Hardware infomation with hostname */
 export type Hardware = results.HardwareInfo & {
@@ -40,7 +41,7 @@ export interface Measurement extends results.Measurement {
   valid: boolean;
 }
 
-/** Organiazed meltan teststep result */
+/** Organized meltan teststep result */
 export class TestStep {
   testStepId = "";
   name = "";
@@ -65,23 +66,31 @@ export class TestStep {
  */
 @Injectable()
 export class TestRunService {
-  testrun: TestRun;
+  testRun: TestRun;
+  private dataReadySubject = new BehaviorSubject<boolean>(false);
+  dataReady$ = this.dataReadySubject.asObservable();
 
   constructor(private readonly resultRecordService: ResultRecordService) {
-    this.testrun = this.createTestRun(this.resultRecordService.get());
+    this.testRun = this.createTestRun(this.resultRecordService.get());
+    this.resultRecordService.dataReady$.subscribe(newVal => {
+      if (newVal) {
+        this.testRun = this.createTestRun(this.resultRecordService.get());
+        this.dataReadySubject.next(newVal);
+      }
+    });
   }
 
   /** Returns organiazed TestRun result */
   get() {
-    return this.testrun;
+    return this.testRun;
   }
 
   getTestStep(testStepId: string): TestStep {
-    return this.testrun.steps[testStepId];
+    return this.testRun.steps[testStepId];
   }
 
   getHardwareComponent(hardwareInfoId: string): Hardware {
-    return this.testrun.hardwareInfos[hardwareInfoId];
+    return this.testRun.hardwareInfos[hardwareInfoId];
   }
 
   private createTestRun(records: ResultRecord[]): TestRun {
@@ -315,13 +324,11 @@ export class TestRunService {
       }
       return false;
     }
-    if (element?.range) {
-      if (element.range?.maximum && element.range.maximum < element.value) {
-        return false;
-      }
-      if (element.range?.minimum && element.range?.minimum > element.value) {
-        return false;
-      }
+    if (element?.range?.maximum != undefined && element.range.maximum < element.value) {
+      return false;
+    }
+    if (element?.range?.minimum != undefined && element.range.minimum > element.value) {
+      return false;
     }
     return this.measurementValidateOCP(element);
   }

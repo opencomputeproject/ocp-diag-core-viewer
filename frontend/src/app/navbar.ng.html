@@ -1,8 +1,11 @@
-<mat-toolbar>
-  <a mat-button routerLink="/" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">TestRun</a>
-  <a mat-button routerLink="/teststeps" routerLinkActive="tab-active"
-    [routerLinkActiveOptions]="{ exact: true }">TestSteps</a>
-  <a mat-button routerLink="/logs" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">Logs</a>
-  <div class="spacer"></div>
-  <a class="to-home-page" href="/"><span>OCP Diag Result Viewer</span></a>
-</mat-toolbar>
+<div *ngIf="dataReady$ | async as dataReady; else loading">
+  <mat-toolbar>
+    <a mat-button routerLink="/" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">TestRun</a>
+    <a mat-button routerLink="/teststeps" routerLinkActive="tab-active"
+      [routerLinkActiveOptions]="{ exact: true }">TestSteps</a>
+    <a mat-button routerLink="/logs" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">Logs</a>
+    <div class="spacer"></div>
+    <a class="to-home-page" href="/"><span>OCP Diag Result Viewer</span></a>
+  </mat-toolbar>
+</div>
+<ng-template #loading>Loading...</ng-template>

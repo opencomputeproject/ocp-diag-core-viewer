@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Sort} from '@angular/material/sort';
+import { Component, Input, OnInit } from '@angular/core';
+import { Sort } from '@angular/material/sort';
 
 import {
   MeasurementElementRange,
   MeasurementElementValidValues,
+  MeasurementSeriesStart,
   Validator,
   ValidatorType,
 } from "../../services/results_type";
@@ -13,8 +14,11 @@ import {
   TestRunService,
   TestStep,
 } from "../../services/testrun_service";
+import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 interface MeasurementSeriesOption {
+  measurementName: string;
   text: string;
   measurementSeriesId: string;
 }
@@ -34,12 +38,21 @@ function compare<T>(a: T, b: T, isAsc: boolean) {
   templateUrl: "measurements.ng.html",
   styleUrls: ["measurements.css"],
 })
+
 export class MeasurementsComponent implements OnInit {
+  // original data
   @Input() dataSource: Measurement[] = [];
   @Input() showSeries = false;
+  @Input() measurementSeriesInfos: Record<string, MeasurementSeriesStart> = {};
   teststep!: TestStep;
+  // total data after filtering/sorting
   measurementsDataSource: Measurement[] = [];
+  // the data being visible in the table (after paginating)
+  measurementsTableDataSource = new MatTableDataSource<Measurement>();
   measurementSeriesOptions: MeasurementSeriesOption[] = [];
+  totalDataLength = 0;
+  currentPageSize = 50;
+  currentPage = 0;
   displayedColumns = [
     "name",
     "value",
@@ -54,27 +67,41 @@ export class MeasurementsComponent implements OnInit {
   constructor(
     private readonly testrunService: TestRunService,
     readonly sideInfoService: SideInfoService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     if (this.showSeries) {
       this.displayedColumns = ["id", "index"].concat(this.displayedColumns);
     }
+  }
+  ngAfterContentInit() {
+    this.totalDataLength = this.dataSource.length;
     this.measurementsDataSource = this.dataSource.slice();
-    this.initMeasurementSeriesOptions(this.dataSource);
+    this.measurementsTableDataSource.data = this.dataSource.slice(0, this.currentPageSize);
+    this.initMeasurementSeriesOptions(this.measurementSeriesInfos);
   }
 
-  private initMeasurementSeriesOptions(dataSource: Measurement[]) {
+  onPaginateChange(event: PageEvent) {
+    const startIndex = event.pageIndex * event.pageSize;
+    this.measurementsTableDataSource.data = this.measurementsDataSource.slice(startIndex, startIndex + event.pageSize);
+    this.currentPageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+  }
+
+  private initMeasurementSeriesOptions(measurementSeriesInfo: Record<string, MeasurementSeriesStart>) {
     this.measurementSeriesOptions = [];
-    for (const measurement of dataSource) {
-      if (measurement.index === 0) {
-        this.measurementSeriesOptions.push({
-          text: `${measurement.measurementSeriesId}:
-              ${measurement.name}`,
-          measurementSeriesId: measurement.measurementSeriesId,
-        });
-      }
+    for (const measurementSeriesId in measurementSeriesInfo) {
+      const measurementSeriesStart = measurementSeriesInfo[measurementSeriesId];
+      this.measurementSeriesOptions.push({
+        measurementName: measurementSeriesStart.name,
+        text: `${measurementSeriesId}:
+              ${measurementSeriesStart.name}`,
+        measurementSeriesId: measurementSeriesId,
+      });
+
     }
+    this.measurementSeriesOptions.sort((a: MeasurementSeriesOption, b: MeasurementSeriesOption) => a.measurementName > b.measurementName ? 1 : -1);
   }
 
   getHardwareInfoName(hardwareId: string) {
@@ -91,29 +118,26 @@ export class MeasurementsComponent implements OnInit {
       );
     }
 
-    if (!this.sort) {
-      return;
+    if (!!this.sort && this.sort.active && !!this.sort.direction) {
+      this.measurementsDataSource.sort((a, b) => {
+        const isAsc = this.sort.direction === "asc";
+        switch (this.sort.active) {
+          case "id":
+            return compare(a.measurementSeriesId, b.measurementSeriesId, isAsc);
+          case "index":
+            return compare(a.index, b.index, isAsc);
+          case "name":
+            return compare(a.name, b.name, isAsc);
+          case "validIcon":
+            return compare(a.valid, b.valid, isAsc);
+          default:
+            return 0;
+        }
+      });
     }
-
-    if (!this.sort.active || this.sort.direction === "") {
-      this.measurementsDataSource = data;
-      return;
-    }
-    this.measurementsDataSource.sort((a, b) => {
-      const isAsc = this.sort.direction === "asc";
-      switch (this.sort.active) {
-        case "id":
-          return compare(a.measurementSeriesId, b.measurementSeriesId, isAsc);
-        case "index":
-          return compare(a.index, b.index, isAsc);
-        case "name":
-          return compare(a.name, b.name, isAsc);
-        case "validIcon":
-          return compare(a.valid, b.valid, isAsc);
-        default:
-          return 0;
-      }
-    });
+    this.currentPage = 0;
+    this.totalDataLength = this.measurementsDataSource.length;
+    this.measurementsTableDataSource.data = this.measurementsDataSource.slice(0, this.currentPageSize);
   }
 
   sortMeasurementsComponent(sort: Sort) {

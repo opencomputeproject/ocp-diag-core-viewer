@@ -177,7 +177,6 @@ def testHtmlReplaceExternalFiles_Success(test_index_file_contents):
 def testHtml_Success(output_stream, test_index_file_contents):
     ocp_diag_data_content = """{"testRunArtifact":{"testRunStart":{"name":"NAME","version":"1"}},"sequenceNumber":0,"timestamp":"timestamp 0"}
         {"testRunArtifact":{"testRunEnd":{"name":"NAME","result":"PASS","status":"COMPLETE"}},"sequenceNumber":1,"timestamp":"timestamp 1"}"""
-    print(test_index_file_contents)
     viewer_runner.html(
         ocp_diag_data_content,
         test_index_file_contents,

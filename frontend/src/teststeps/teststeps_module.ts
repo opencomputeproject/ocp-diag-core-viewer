@@ -9,6 +9,7 @@ import {SummaryBarModule} from '../components/summary_bar/summary_bar_module';
 
 import {TestStepsListComponent} from './teststeps_list';
 import {TestStepsViewComponent} from './teststeps_view';
+import {TestStepsRoutingModule} from './teststeps_routing_module';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import {TestStepsViewComponent} from './teststeps_view';
     RouterModule,
 
     SummaryBarModule,
+    TestStepsRoutingModule
   ],
   declarations: [
     TestStepsViewComponent,

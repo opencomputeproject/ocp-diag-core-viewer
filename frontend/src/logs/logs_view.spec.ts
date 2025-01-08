@@ -1,31 +1,34 @@
-import {HarnessLoader} from '@angular/cdk/testing';
-import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatButtonHarness} from '@angular/material/button/testing';
-import {MatExpansionPanelHarness} from '@angular/material/expansion/testing';
-import {MatInputHarness} from '@angular/material/input/testing';
-import {MatSelectHarness} from '@angular/material/select/testing';
-import {BrowserDynamicTestingModule, platformBrowserDynamicTesting} from '@angular/platform-browser-dynamic/testing';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatExpansionPanelHarness } from '@angular/material/expansion/testing';
+import { MatInputHarness } from '@angular/material/input/testing';
+import { MatSelectHarness } from '@angular/material/select/testing';
+import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import {ResultRecord, ResultRecordService} from '../services/result_record_service';
-import {SEVERITIES} from '../services/results_type';
-import {TestRunService} from '../services/testrun_service';
+import { ResultRecord, ResultRecordService } from '../services/result_record_service';
+import { SEVERITIES } from '../services/results_type';
+import { TestRunService } from '../services/testrun_service';
 
-import {LogsModule} from './logs_module';
-import {LogsViewComponent} from './logs_view';
+import { LogsModule } from './logs_module';
+import { LogsViewComponent } from './logs_view';
+import { BehaviorSubject } from 'rxjs';
 
+const dataReadySubject = new BehaviorSubject<boolean>(true);
+const dataReady$ = dataReadySubject.asObservable();
 describe('LogsViewComponent Component', () => {
   let recordService: jasmine.SpyObj<ResultRecordService>;
 
   beforeAll(() => {
     TestBed.resetTestEnvironment();
     TestBed.initTestEnvironment(
-        BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+      BrowserDynamicTestingModule, platformBrowserDynamicTesting());
   });
 
   beforeEach(() => {
-    recordService = jasmine.createSpyObj('mockResultRecordService', ['get']);
+    recordService = jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
 
     TestBed.configureTestingModule({
       declarations: [LogsViewComponent],
@@ -35,7 +38,7 @@ describe('LogsViewComponent Component', () => {
       ],
       providers: [
         TestRunService,
-        {provide: ResultRecordService, useValue: recordService},
+        { provide: ResultRecordService, useValue: recordService },
       ],
     });
   });
@@ -90,9 +93,9 @@ describe('LogsViewComponent Component', () => {
 
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.nativeElement.querySelector('tbody')
-               .querySelectorAll('tr')
-               .length)
-        .toEqual(2);
+      .querySelectorAll('tr')
+      .length)
+      .toEqual(2);
   });
 
   it('should have sevierity style on the rows', () => {
@@ -120,9 +123,9 @@ describe('LogsViewComponent Component', () => {
     expect(fixture.componentInstance).toBeTruthy();
     for (const [i, severity] of SEVERITIES.entries()) {
       expect(fixture.nativeElement.querySelector('tbody')
-                 .querySelectorAll('tr')[i]
-                 .classList.contains(`log-severity-${severity}`.toLowerCase()))
-          .toBeTrue();
+        .querySelectorAll('tr')[i]
+        .classList.contains(`log-severity-${severity}`.toLowerCase()))
+        .toBeTrue();
     }
   });
 });
@@ -134,7 +137,7 @@ describe('Severity Selector', () => {
   let select: MatSelectHarness;
 
   beforeEach(() => {
-    recordService = jasmine.createSpyObj('mockResultRecordService', ['get']);
+    recordService = jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
     recordService.get.and.returnValue([]);
 
     TestBed.configureTestingModule({
@@ -145,7 +148,7 @@ describe('Severity Selector', () => {
       ],
       providers: [
         TestRunService,
-        {provide: ResultRecordService, useValue: recordService},
+        { provide: ResultRecordService, useValue: recordService },
       ],
     });
   });
@@ -155,7 +158,7 @@ describe('Severity Selector', () => {
     fixture.detectChanges();
     loader = TestbedHarnessEnvironment.loader(fixture);
     select = await loader.getHarness(
-        MatSelectHarness.with({selector: '#severity-selector'}));
+      MatSelectHarness.with({ selector: '#severity-selector' }));
   });
 
   it('should be default to DEBUG', async () => {
@@ -187,7 +190,7 @@ describe('Search Input', () => {
   let input: MatInputHarness;
 
   beforeEach(() => {
-    recordService = jasmine.createSpyObj('mockResultRecordService', ['get']);
+    recordService = jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
     recordService.get.and.returnValue([]);
 
     TestBed.configureTestingModule({
@@ -198,7 +201,7 @@ describe('Search Input', () => {
       ],
       providers: [
         TestRunService,
-        {provide: ResultRecordService, useValue: recordService},
+        { provide: ResultRecordService, useValue: recordService },
       ],
     });
   });
@@ -208,7 +211,7 @@ describe('Search Input', () => {
     fixture.detectChanges();
     loader = TestbedHarnessEnvironment.loader(fixture);
     input = await loader.getHarness(
-        MatInputHarness.with({selector: '#search-input'}));
+      MatInputHarness.with({ selector: '#search-input' }));
   });
 
   it('should be default to empty', async () => {
@@ -219,7 +222,7 @@ describe('Search Input', () => {
     await input.setValue('keyword');
 
     expect(recordService.get)
-        .toHaveBeenCalledWith(jasmine.any(String), 'keyword');
+      .toHaveBeenCalledWith(jasmine.any(String), 'keyword');
   });
 });
 
@@ -231,7 +234,7 @@ describe('Expand Panel Button', () => {
   let panel: MatExpansionPanelHarness;
 
   beforeEach(async () => {
-    recordService = jasmine.createSpyObj('mockResultRecordService', ['get']);
+    recordService = jasmine.createSpyObj('mockResultRecordService', ['get'], { 'dataReady$': dataReady$ });
 
     TestBed.configureTestingModule({
       declarations: [LogsViewComponent],
@@ -241,7 +244,7 @@ describe('Expand Panel Button', () => {
       ],
       providers: [
         TestRunService,
-        {provide: ResultRecordService, useValue: recordService},
+        { provide: ResultRecordService, useValue: recordService },
       ],
     });
     const meltanRecords: ResultRecord[] = [

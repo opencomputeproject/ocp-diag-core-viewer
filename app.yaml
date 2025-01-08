@@ -13,9 +13,10 @@
 # limitations under the License.
 
 runtime: python310
+instance_class: F4_1G
 build_env_variables:
   PIP_NO_DEPS: 1
-entrypoint: gunicorn -b :$PORT viewer.server.main:app
+entrypoint: gunicorn -b :$PORT viewer.server.main:app --log-level=DEBUG --timeout=300
 handlers:
   # This configures Google App Engine to serve the files in the app's static
   # directory.

@@ -22,8 +22,12 @@ describe('ResultRecords Service', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should have initialized dataReady observable', () => {
+    expect(service.dataReady$).toBeDefined();
+  });
+
   it('get default empty records', () => {
-    OCP_DIAG_RESULT_RECORDS = undefined;
+    OCP_DIAG_RESULT_RECORDS = [];
     expect(service.get()).toEqual([]);
   });
 

@@ -1,16 +1,16 @@
-import {TestBed} from '@angular/core/testing';
-import {BrowserDynamicTestingModule, platformBrowserDynamicTesting} from '@angular/platform-browser-dynamic/testing';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {RouterTestingModule} from '@angular/router/testing';
+import { TestBed } from '@angular/core/testing';
+import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
 
-import {App} from './app';
-import {AppModule} from './app.module';
+import { App } from './app';
+import { AppModule } from './app.module';
 
 describe('App Component', () => {
   beforeAll(() => {
     TestBed.resetTestEnvironment();
     TestBed.initTestEnvironment(
-        BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+      BrowserDynamicTestingModule, platformBrowserDynamicTesting());
   });
 
   beforeEach((() => {
