@@ -1,4 +1,4 @@
-/** Returns time differenc in hh:mm:ss format. */
+/** Returns time difference in hh:mm:ss format. */
 export function timeDiff(startTime: string, endTime: string) {
   const start = new Date(startTime).getTime();
   const end = new Date(endTime).getTime();
@@ -12,4 +12,12 @@ export function timeDiff(startTime: string, endTime: string) {
   const secondsStr = `0${seconds}`.slice(-2);
 
   return `${hoursStr}:${minutesStr}:${secondsStr}`;
+}
+
+/** Calculates duration if end time exists. See opencomputeproject/ocp-diag-core-viewer#10 */
+export function calulateDurationOrShowMessage(startTime: string, endTime: string) {
+  if (endTime === '') {
+    return 'No test end time present, cannot calculate duration.';
+  }
+  return timeDiff(startTime, endTime);
 }

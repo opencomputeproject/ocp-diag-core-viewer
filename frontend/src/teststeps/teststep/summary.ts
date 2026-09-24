@@ -5,7 +5,7 @@ import {MatTableDataSource} from '@angular/material/table';
 
 import {Error, File, Tag} from '../../services/results_type';
 import {TestRunService, TestStep} from '../../services/testrun_service';
-import {timeDiff} from '../../utility/utils';
+import {calulateDurationOrShowMessage} from '../../utility/utils';
 
 /**
  *  The Teststep summary tab.
@@ -71,11 +71,13 @@ export class SummaryComponent implements OnInit {
       this.teststep.measurementSeriesElements.length
     ]);
     this.summary.push(
-        ['Start Time', formatDate(this.teststep.startTime, 'full', 'en-us')]);
+      ['Start Time', formatDate(this.teststep.startTime, 'full', 'en-us')]);
     this.summary.push(
-        ['End Time', formatDate(this.teststep.endTime, 'full', 'en-us')]);
-    this.summary.push(
-        ['Duration', timeDiff(this.teststep.startTime, this.teststep.endTime)]);
+      ['End Time', formatDate(this.teststep.endTime, 'full', 'en-us')]);
+    this.summary.push([
+      'Duration',
+      calulateDurationOrShowMessage(this.teststep.startTime, this.teststep.endTime)
+    ]);
   }
 
   private initExtentions() {

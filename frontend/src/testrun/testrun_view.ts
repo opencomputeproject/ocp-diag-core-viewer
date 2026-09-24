@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Error } from '../services/results_type';
 import { SideInfoService } from '../services/side_info_service';
 import { TestRun, TestRunService } from '../services/testrun_service';
-import { timeDiff } from '../utility/utils';
+import { calulateDurationOrShowMessage } from '../utility/utils';
 import { BehaviorSubject } from 'rxjs';
 
 /**
@@ -76,7 +76,7 @@ export class TestRunViewComponent implements OnInit {
     this.summary.push(
       ['End Time', testrun.endTime ? formatDate(testrun.endTime, 'full', 'en-us') : ""]);
     this.summary.push(
-      ['Duration', timeDiff(testrun.startTime, testrun.endTime)]);
+      ['Duration', calulateDurationOrShowMessage(testrun.startTime, testrun.endTime)]);
     this.summary.push(['Parameters', testrun.parameters]);
   }
 
