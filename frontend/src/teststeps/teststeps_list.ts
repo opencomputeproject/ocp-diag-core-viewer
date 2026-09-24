@@ -3,7 +3,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 
 import {TestRunService, TestStep} from '../services/testrun_service';
-import {timeDiff} from '../utility/utils';
+import {timeDiff, calulateDurationOrShowMessage} from '../utility/utils';
 
 
 /**
@@ -32,13 +32,14 @@ export class TestStepsListComponent implements AfterViewInit {
   dataSource: MatTableDataSource<TestStep>;
   objectKeys = Object.keys;
   timeDiff = timeDiff;
+  calulateDurationOrShowMessage = calulateDurationOrShowMessage;
 
   @ViewChild(MatSort) sort!: MatSort;
 
 
   constructor(private readonly testrunService: TestRunService) {
     this.dataSource = new MatTableDataSource<TestStep>(
-        Object.values(this.testrunService.get().steps));
+      Object.values(this.testrunService.get().steps));
   }
 
   ngAfterViewInit() {

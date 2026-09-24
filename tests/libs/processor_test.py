@@ -48,10 +48,10 @@ def test_processor_validate():
         processor.validate()
     assert "TestRunStart should be present." in str(excinfo.value)
 
-    with pytest.raises(ArtifactParseError) as excinfo:
-        processor.add(
-            """{"testRunArtifact":{"testRunStart":{"name":"NAME","version":"1"}},"sequenceNumber":0,"timestamp":"timestamp 0"}""",
-            0,
-        )
-        processor.validate()
-    assert "TestRunEnd should be present." in str(excinfo.value)
+    # parse json with no testRunEnd
+    processor.add(
+        """{"testRunArtifact":{"testRunStart":{"name":"NAME","version":"1"}},"sequenceNumber":0,"timestamp":"timestamp 0"}""",
+        0,
+    )
+    processor.validate()
+    assert "TestRunEnd should be present." not in str(excinfo.value)

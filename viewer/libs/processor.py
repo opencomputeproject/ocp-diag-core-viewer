@@ -6,7 +6,7 @@ from viewer.libs.record_builder import ArtifactParseError, RecordBuilder
 class Processor:
     def __init__(self, builder: RecordBuilder):
         self.is_test_run_start_present = False
-        self.is_test_run_end_present = False
+        self.is_test_run_end_present = True
         self.records = []
         self.record_builder = builder
 
@@ -43,5 +43,3 @@ class Processor:
     def validate(self):
         if not self.is_test_run_start_present:
             raise ArtifactParseError("TestRunStart should be present.")
-        if not self.is_test_run_end_present:
-            raise ArtifactParseError("TestRunEnd should be present.")

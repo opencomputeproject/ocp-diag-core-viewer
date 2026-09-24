@@ -73,7 +73,7 @@
     <!-- Duration -->
     <ng-container matColumnDef="duration">
       <th mat-header-cell *matHeaderCellDef>Duration</th>
-      <td mat-cell *matCellDef="let element">{{timeDiff(element.startTime, element.endTime)}}</td>
+      <td mat-cell *matCellDef="let element">{{calulateDurationOrShowMessage(element.startTime, element.endTime)}}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
