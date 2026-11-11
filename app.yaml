@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-runtime: python310
+runtime: python313
 instance_class: F4_1G
 build_env_variables:
   PIP_NO_DEPS: 1

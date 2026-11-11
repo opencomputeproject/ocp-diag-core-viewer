@@ -13,12 +13,12 @@ dependencies = [
     "Flask>=2.2.3",
     "gunicorn>=20.1.0",
     "google-cloud-storage>=2.8.0",
-    "google-cloud-secret-manager==2.1.0",
+    "google-cloud-secret-manager>=2.1.0,<3.0.0",
     "python-dotenv>=1.0.0",
     "toml>=0.10.2",
     "authlib>=1.2.1",
 ]
-requires-python = ">=3.10,<3.11"
+requires-python = ">=3.10,<3.14"
 license = {text = "MIT"}
 
 [build-system]
@@ -34,7 +34,7 @@ dev = [
     "pdm-packer>=0.6.0",
 ]
 lint = [
-    "black>=22.12.0",
+    "black>=22.12.0,<24.0.0",
     "flake8>=6.0.0",
     "isort>=5.11.4",
 ]
