@@ -35,5 +35,6 @@ Thumbs.db
 /static/*
 /viewer/server/templates/index.html
 /viewer/client/files/*
+!/viewer/client/files/__init__.py
 requirements.txt
 /artifacts/*
