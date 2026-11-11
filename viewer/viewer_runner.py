@@ -163,6 +163,13 @@ def html(
     )
 
     index_html_soup.find("script", attrs={"src": "/scripts.js"}).extract()
+    # index.html contains an inline script used by the server, which declares
+    # OCP_DIAG_RESULT_RECORDS and fetches the data from /view/result/<id>.
+    # Remove it, otherwise the data embedded below fails to load due to the
+    # duplicate declaration and the page is stuck at "Loading...".
+    for script in index_html_soup.find_all("script", src=False):
+        if script.string and "/view/result/" in script.string:
+            script.extract()
     ocp_diag_test_data_tag = index_html_soup.new_tag("script")
     ocp_diag_test_data_tag.string = ocp_diag_test_data_js
     index_html_soup.find("body").append(ocp_diag_test_data_tag)
