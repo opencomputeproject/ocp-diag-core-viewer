@@ -5,8 +5,10 @@ import bs4
 from viewer.client import files
 
 
-def remove_static_path(file_path=pkg_resources.path(files, "index.html")):
+def remove_static_path(file_path=None):
     """Removes the static prefix in index.html"""
+    if file_path is None:
+        file_path = pkg_resources.files(files).joinpath("index.html")
     index_html_soup = bs4.BeautifulSoup(file_path.read_text(), "html.parser")
     for style in index_html_soup.find_all("link"):
         if (
