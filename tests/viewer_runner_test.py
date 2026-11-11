@@ -223,3 +223,26 @@ def testUploadError(requests_mock, test_file_path):
 
     assert log.find("Request failed with status 404") is not None
     assert log.find("Not Found") is not None
+
+
+def testHtml_RemovesServerFetchScript(output_stream, test_index_file_contents):
+    server_script = (
+        "<script>let OCP_DIAG_RESULT_RECORDS = [];"
+        "fetch('/view/result/' + id);</script>"
+    )
+    index_html = test_index_file_contents.replace(
+        "</body>", server_script + "</body>"
+    )
+    viewer_runner.html(
+        '{"testRunArtifact":{"testRunStart":{"name":"NAME","version":"1"}},'
+        '"sequenceNumber":0,"timestamp":"timestamp 0"}',
+        index_html,
+        {"/main.js": "// this is app_bundle.js"},
+        "/* this is styles.css */",
+        output_stream,
+    )
+
+    output = output_stream.getvalue()
+    assert "/view/result/" not in output
+    assert "let OCP_DIAG_RESULT_RECORDS" not in output
+    assert "const OCP_DIAG_RESULT_RECORDS = [" in output
