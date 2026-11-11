@@ -1,0 +1,10 @@
+<div class="timezone-selector">
+  <span class="timezone-selector-label">Timezone:</span>
+  <mat-button-toggle-group class="timezone-selector-group" aria-label="Display timezone"
+    [value]="timezoneService.timezone$ | async" (change)="onChange($event)">
+    <mat-button-toggle *ngFor="let option of timezoneService.options" [value]="option.id"
+      [title]="option.description">
+      {{option.label}}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>

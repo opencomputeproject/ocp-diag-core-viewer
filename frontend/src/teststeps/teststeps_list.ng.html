@@ -67,7 +67,7 @@
     <!-- Start time -->
     <ng-container matColumnDef="startTime">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Start time</th>
-      <td mat-cell *matCellDef="let element">{{element.startTime | date: 'full'}}</td>
+      <td mat-cell *matCellDef="let element">{{element.startTime | tzDate}}</td>
     </ng-container>
 
     <!-- Duration -->

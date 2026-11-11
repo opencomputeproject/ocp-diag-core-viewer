@@ -1,5 +1,4 @@
-import { formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,8 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Error } from '../services/results_type';
 import { SideInfoService } from '../services/side_info_service';
 import { TestRun, TestRunService } from '../services/testrun_service';
+import { TimezoneService } from '../services/timezone_service';
 import { calulateDurationOrShowMessage } from '../utility/utils';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 /**
  *  The testrun view page
@@ -22,7 +22,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./testrun_view.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TestRunViewComponent implements OnInit {
+export class TestRunViewComponent implements OnInit, OnDestroy {
   testrun: TestRun;
   summary: Array<[string, unknown]> = [];
   errorsDataSource!: MatTableDataSource<Error>;
@@ -30,15 +30,20 @@ export class TestRunViewComponent implements OnInit {
   private titleService = inject(Title);
   private dataReadySubject = new BehaviorSubject<boolean>(false);
   dataReady$ = this.dataReadySubject.asObservable();
+  private readonly timezoneSubscription: Subscription;
   ngOnInit() {
     // do nothing
+  }
+  ngOnDestroy() {
+    this.timezoneSubscription.unsubscribe();
   }
   updateDataReady(newData: boolean) {
     this.dataReadySubject.next(newData);
   }
   constructor(
     private readonly testrunService: TestRunService,
-    readonly sideInfoService: SideInfoService) {
+    readonly sideInfoService: SideInfoService,
+    private readonly timezoneService: TimezoneService) {
     this.testrun = this.testrunService.get();
     this.testrunService.dataReady$.subscribe(newVal => {
       if (newVal) {
@@ -48,6 +53,12 @@ export class TestRunViewComponent implements OnInit {
         this.initSummary();
         this.errorsDataSource.sort = this.errorsSort;
         this.dataReadySubject.next(newVal);
+      }
+    });
+    // Re-render start / end time when the display timezone changes.
+    this.timezoneSubscription = this.timezoneService.timezone$.subscribe(() => {
+      if (this.dataReadySubject.value) {
+        this.initSummary();
       }
     });
   }
@@ -65,6 +76,7 @@ export class TestRunViewComponent implements OnInit {
     }
     // for example "cool test name - OCP Diag Result Viewer"
     this.titleService.setTitle(maybeTestNamePrefix + 'OCP Diag Result Viewer');
+    this.summary = [];
     this.summary.push(['Name', testrun.name]);
     this.summary.push(['Version', testrun.version]);
     this.summary.push(['Tags', testrun.tags.join(', ')]);
@@ -72,9 +84,9 @@ export class TestRunViewComponent implements OnInit {
     this.summary.push(['Result', testrun.result]);
     this.summary.push(['Host name', this.getHostNames().join(', ')]);
     this.summary.push(
-      ['Start Time', testrun.startTime ? formatDate(testrun.startTime, 'full', 'en-us') : ""]);
+      ['Start Time', this.timezoneService.format(testrun.startTime)]);
     this.summary.push(
-      ['End Time', testrun.endTime ? formatDate(testrun.endTime, 'full', 'en-us') : ""]);
+      ['End Time', this.timezoneService.format(testrun.endTime)]);
     this.summary.push(
       ['Duration', calulateDurationOrShowMessage(testrun.startTime, testrun.endTime)]);
     this.summary.push(['Parameters', testrun.parameters]);

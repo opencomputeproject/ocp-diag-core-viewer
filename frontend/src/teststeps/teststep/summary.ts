@@ -1,10 +1,11 @@
-import {formatDate} from '@angular/common';
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
+import {Subscription} from 'rxjs';
 
 import {Error, File, Tag} from '../../services/results_type';
 import {TestRunService, TestStep} from '../../services/testrun_service';
+import {TimezoneService} from '../../services/timezone_service';
 import {calulateDurationOrShowMessage} from '../../utility/utils';
 
 /**
@@ -15,7 +16,7 @@ import {calulateDurationOrShowMessage} from '../../utility/utils';
   templateUrl: 'summary.ng.html',
   styleUrls: ['summary.css']
 })
-export class SummaryComponent implements OnInit {
+export class SummaryComponent implements OnInit, OnDestroy {
   @Input() testStepId = '';
   teststep!: TestStep;
   summary: Array<[string, unknown]> = [];
@@ -32,11 +33,18 @@ export class SummaryComponent implements OnInit {
   @ViewChild(MatSort) errorsSort!: MatSort;
   @ViewChild(MatSort) filesTableSort!: MatSort;
 
-  constructor(private readonly testrunService: TestRunService) {}
+  private timezoneSubscription?: Subscription;
+
+  constructor(
+    private readonly testrunService: TestRunService,
+    private readonly timezoneService: TimezoneService) {}
 
   ngOnInit() {
     this.teststep = this.testrunService.getTestStep(this.testStepId);
-    this.initSummary();
+    // initSummary() is also called right away with the current timezone.
+    this.timezoneSubscription = this.timezoneService.timezone$.subscribe(() => {
+      this.initSummary();
+    });
 
     // Errors table
     this.errorsDataSource = new MatTableDataSource(this.teststep.errors);
@@ -48,6 +56,10 @@ export class SummaryComponent implements OnInit {
 
     // Extentions
     this.initExtentions();
+  }
+
+  ngOnDestroy() {
+    this.timezoneSubscription?.unsubscribe();
   }
 
   tagslist(tags: Tag[]): string {
@@ -71,9 +83,9 @@ export class SummaryComponent implements OnInit {
       this.teststep.measurementSeriesElements.length
     ]);
     this.summary.push(
-      ['Start Time', formatDate(this.teststep.startTime, 'full', 'en-us')]);
+      ['Start Time', this.timezoneService.format(this.teststep.startTime)]);
     this.summary.push(
-      ['End Time', formatDate(this.teststep.endTime, 'full', 'en-us')]);
+      ['End Time', this.timezoneService.format(this.teststep.endTime)]);
     this.summary.push([
       'Duration',
       calulateDurationOrShowMessage(this.teststep.startTime, this.teststep.endTime)

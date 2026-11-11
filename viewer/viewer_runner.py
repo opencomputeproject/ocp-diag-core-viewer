@@ -11,6 +11,7 @@ from immutabledict import immutabledict
 
 from viewer.libs.build_ocp_diag_result_data import build_ocp_diag_test_data_js
 from viewer.libs.classifier import ResultClassifier
+from viewer.libs.timezone import UTC, convert_timestamp
 
 
 class ArtifactParseError(Exception):
@@ -42,6 +43,7 @@ def log(
     loglevel: str,
     ocp_diag_data_content: str,
     writer: TextIO,
+    timezone: str = UTC,
 ):
     """Runs log subcommand.
 
@@ -50,6 +52,8 @@ def log(
       loglevel: Level included and above will be printed.
       ocp_diag_data_content: String of log data.
       writer: File-like object to write logging results to.
+      timezone: Timezone to display timestamps in, one of
+        viewer.libs.timezone.TIMEZONES. Default UTC keeps the original value.
 
     Returns:
 
@@ -82,7 +86,7 @@ def log(
             result_records.append(
                 [
                     record["sequenceNumber"],
-                    record["timestamp"],
+                    convert_timestamp(record["timestamp"], timezone),
                     record["severity"]
                     if not display_color
                     else wrap_color(record["severity"]),
