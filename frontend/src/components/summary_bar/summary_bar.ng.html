@@ -5,7 +5,7 @@
       <div class="summary-bar-text">
         <span class="summary-bar-name">{{name}}</span>
         <span *ngIf="version"> v{{version}}</span>
-        <span> on {{startTime | date: 'full' }}</span>
+        <span> on {{startTime | tzDate}}</span>
       </div>
     </div>
     <mat-chip-set class="summary-bar-chips">

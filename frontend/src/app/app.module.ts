@@ -5,6 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { KeyValueTableModule } from '../components/key_value_table/key_value_table_module';
+import { TimezoneModule } from '../components/timezone/timezone_module';
 import { LogsModule } from '../logs/logs_module';
 import { ResultRecordService } from '../services/result_record_service';
 import { SideInfoService } from '../services/side_info_service';
@@ -38,6 +39,7 @@ import { SideInfoComponent } from './side_info';
     TestrunModule,
     TestStepsModule,
     TestStepModule,
+    TimezoneModule,
   ],
   providers: [
     ResultRecordService,

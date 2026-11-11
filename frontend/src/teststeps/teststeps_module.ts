@@ -6,6 +6,7 @@ import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
 
 import {SummaryBarModule} from '../components/summary_bar/summary_bar_module';
+import {TimezoneModule} from '../components/timezone/timezone_module';
 
 import {TestStepsListComponent} from './teststeps_list';
 import {TestStepsViewComponent} from './teststeps_view';
@@ -21,7 +22,8 @@ import {TestStepsRoutingModule} from './teststeps_routing_module';
     RouterModule,
 
     SummaryBarModule,
-    TestStepsRoutingModule
+    TestStepsRoutingModule,
+    TimezoneModule,
   ],
   declarations: [
     TestStepsViewComponent,

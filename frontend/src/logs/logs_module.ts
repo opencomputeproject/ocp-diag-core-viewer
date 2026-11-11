@@ -8,6 +8,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSelectModule} from '@angular/material/select';
 import {MatTableModule} from '@angular/material/table';
 
+import {TimezoneModule} from '../components/timezone/timezone_module';
 import {ToggleJsonViewerModule} from '../components/toggle_json_viewer/toggle_json_viewer_module';
 
 import {LogsViewComponent} from './logs_view';
@@ -22,6 +23,7 @@ import {LogsViewComponent} from './logs_view';
     MatPaginatorModule,
     MatSelectModule,
     MatTableModule,
+    TimezoneModule,
     ToggleJsonViewerModule,
   ],
   declarations: [LogsViewComponent],

@@ -8,6 +8,7 @@ import click
 
 from viewer import viewer_runner
 from viewer.client import files
+from viewer.libs import timezone as tz
 
 if sys.version_info.major < 3 or sys.version_info.minor < 8:
     sys.tracebacklimit = 0
@@ -41,7 +42,17 @@ def main() -> None:
 @click.option(
     "--output", "-o", default="", help="Write to file instead of stdout."
 )
-def log(filepath: str, color: bool, loglevel: str, output: str) -> None:
+@click.option(
+    "--timezone",
+    "-z",
+    default=tz.UTC,
+    type=click.Choice(tz.TIMEZONES, case_sensitive=False),
+    help="Timezone to display timestamps in. Default “utc” (as in the result"
+    " file). “mtv” is America/Los_Angeles.",
+)
+def log(
+    filepath: str, color: bool, loglevel: str, output: str, timezone: str
+) -> None:
     """Generates readable log output from ocp diag result file."""
     with open(filepath, "r") as file:
         ocp_diag_result_data_content = file.read()
@@ -51,11 +62,19 @@ def log(filepath: str, color: bool, loglevel: str, output: str) -> None:
         pathlib.Path(output).parent.mkdir(parents=True, exist_ok=True)
         with open(output, "w") as writer:
             viewer_runner.log(
-                color, loglevel, ocp_diag_result_data_content, writer
+                color,
+                loglevel,
+                ocp_diag_result_data_content,
+                writer,
+                timezone.lower(),
             )
     else:
         viewer_runner.log(
-            color, loglevel, ocp_diag_result_data_content, sys.stdout
+            color,
+            loglevel,
+            ocp_diag_result_data_content,
+            sys.stdout,
+            timezone.lower(),
         )
 
 

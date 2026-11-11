@@ -16,6 +16,10 @@
   flex: 1 1 auto;
 }
 
+.navbar-timezone-selector {
+  margin-right: 24px;
+}
+
 .tab-active {
   background-color: darkgreen;
 }

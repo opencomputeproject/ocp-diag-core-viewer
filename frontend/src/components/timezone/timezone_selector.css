@@ -1,0 +1,18 @@
+.timezone-selector {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.timezone-selector-label {
+  margin-right: 8px;
+}
+
+.timezone-selector-group {
+  height: 32px;
+  align-items: center;
+}
+
+.timezone-selector-group .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  line-height: 32px;
+}
