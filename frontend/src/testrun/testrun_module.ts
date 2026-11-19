@@ -7,6 +7,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
 import { ErrorsTableModule } from '../components/errors_table/errors_table_module';
+import { FailuresTableModule } from '../components/failures_table/failures_table_module';
 import { KeyValueTableModule } from '../components/key_value_table/key_value_table_module';
 import { ParametersViewerModule } from '../components/parameters_viewer/parameters_viewer_module';
 import { SessionTitleBarModule } from '../components/session_title_bar/session_title_bar_module';
@@ -27,6 +28,7 @@ import { TestRunViewComponent } from './testrun_view';
     MatSortModule,
     MatTableModule,
     ErrorsTableModule,
+    FailuresTableModule,
     KeyValueTableModule,
     ParametersViewerModule,
     SessionTitleBarModule,

@@ -2,8 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { ErrorsTableComponent } from '../components/errors_table/errors_table';
+import { FailuresTableComponent } from '../components/failures_table/failures_table';
 import { ParametersViewerComponent } from '../components/parameters_viewer/parameters_viewer';
 import { SessionTitleBarComponent } from '../components/session_title_bar/session_title_bar';
 import { ResultRecordService } from '../services/result_record_service';
@@ -38,6 +40,7 @@ describe('TestRunViewComponent Loading', () => {
       declarations: [TestRunViewComponent],
       imports: [
         TestrunModule,
+        RouterTestingModule,
         NoopAnimationsModule,  // This makes test faster and more stable.
       ],
       providers: [
@@ -81,6 +84,7 @@ describe('TestRunViewComponent Component', () => {
       declarations: [TestRunViewComponent],
       imports: [
         TestrunModule,
+        RouterTestingModule,
         NoopAnimationsModule,  // This makes test faster and more stable.
       ],
       providers: [
@@ -145,6 +149,70 @@ describe('TestRunViewComponent Component', () => {
     expect(paramsEl).toBeTruthy();
     expect(paramsEl.componentInstance.parameters).toEqual(parameters);
     expect(paramsEl.componentInstance.hasParameters).toBeTrue();
+  });
+
+  it('should hide the failures section when there are no failures', () => {
+    testRunService.get.and.returnValue(defaultTestRun);
+    fixture = TestBed.createComponent(TestRunViewComponent);
+    fixture.detectChanges();
+
+    const titleBarEl = fixture.debugElement
+      .queryAll(By.directive(SessionTitleBarComponent))
+      .find(el => el.componentInstance.title === 'Failures');
+    expect(titleBarEl).toBeUndefined();
+    expect(fixture.debugElement.query(By.directive(FailuresTableComponent)))
+      .toBeNull();
+  });
+
+  it('should show the failures section when there are failures', () => {
+    testRunService.get.and.returnValue({
+      ...defaultTestRun,
+      failures: [
+        {
+          testStepId: '1',
+          testStepName: 'Measure InternodeBandwidth',
+          symptom: 'Measure InternodeBandwidth - bad-bandwidth',
+          message: 'Nothing really',
+          hardwareInfoId: ['0'],
+        },
+      ],
+      hardwareInfos: {
+        0: {
+          hostname: 'dut',
+          hardwareInfoId: '0',
+          arena: '',
+          name: 'cpu0',
+          partNumber: 'cpu0_part',
+          manufacturer: 'MFG',
+          partType: 'cpu',
+          mfgPartNumber: '',
+          fruLocation: {
+            devpath: '/path/to/CPU',
+            odataId: '',
+            blockpath: '',
+            serialNumber: 'cpu0_serial',
+          },
+          componentLocation: {
+            devpath: '/path/to/CPU',
+            odataId: '',
+            blockpath: '',
+            serialNumber: '',
+          },
+        },
+      },
+    });
+    fixture = TestBed.createComponent(TestRunViewComponent);
+    fixture.detectChanges();
+
+    const titleBarEl = fixture.debugElement
+      .queryAll(By.directive(SessionTitleBarComponent))
+      .find(el => el.componentInstance.title === 'Failures');
+    expect(titleBarEl?.componentInstance.badge).toBe(1);
+
+    const tableEl =
+      fixture.debugElement.query(By.directive(FailuresTableComponent));
+    expect(tableEl).toBeTruthy();
+    expect(tableEl.componentInstance.dataSource.data).toHaveSize(1);
   });
 
   it('should have an empty errors table', () => {

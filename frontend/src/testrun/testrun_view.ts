@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { Error } from '../services/results_type';
 import { SideInfoService } from '../services/side_info_service';
-import { TestRun, TestRunService } from '../services/testrun_service';
+import { Failure, TestRun, TestRunService } from '../services/testrun_service';
 import { TimezoneService } from '../services/timezone_service';
 import { calulateDurationOrShowMessage } from '../utility/utils';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -25,6 +25,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 export class TestRunViewComponent implements OnInit, OnDestroy {
   testrun: TestRun;
   summary: Array<[string, unknown]> = [];
+  failuresDataSource = new MatTableDataSource<Failure>();
   errorsDataSource!: MatTableDataSource<Error>;
   @ViewChild(MatSort) errorsSort!: MatSort;
   private titleService = inject(Title);
@@ -49,6 +50,7 @@ export class TestRunViewComponent implements OnInit, OnDestroy {
       if (newVal) {
         const testrun = this.testrunService.get();
         this.testrun = testrun;
+        this.failuresDataSource = new MatTableDataSource(testrun.failures ?? []);
         this.errorsDataSource = new MatTableDataSource(testrun.errors);
         this.initSummary();
         this.errorsDataSource.sort = this.errorsSort;

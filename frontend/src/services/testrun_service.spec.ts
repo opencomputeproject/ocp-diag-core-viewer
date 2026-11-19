@@ -286,6 +286,63 @@ describe('TestRun Service: testStepArtifact', () => {
       'verdict': 'my_test-good',
       'type': 'PASS'
     });
+    expect(service.get().failures).toEqual([]);
+  });
+
+  it('should record FAIL diagnoses in testrun.failures', () => {
+    recordService.get.and.returnValue([
+      {
+        category: 'Start',
+        message: 'Measure InternodeBandwidth',
+        raw: {
+          sequenceNumber: 1,
+          testStepArtifact: {
+            testStepStart: { name: 'Measure InternodeBandwidth' },
+            testStepId: '1',
+          },
+          timestamp: '2021-09-30T03:12:40.667365379Z',
+        },
+        sequenceNumber: 1,
+        severity: 'INFO',
+        stage: 'Step 1',
+        timestamp: '2021-09-30T03:12:40.667365379Z',
+      },
+      {
+        category: 'Diagnosis',
+        message: '[FAIL] bad-bandwidth: Nothing really',
+        raw: {
+          sequenceNumber: 4,
+          testStepArtifact: {
+            diagnosis: {
+              verdict: 'bad-bandwidth',
+              type: 'FAIL',
+              message: 'Nothing really',
+              hardwareInfoId: ['0', '1'],
+            },
+            testStepId: '1',
+          },
+          timestamp: '2021-09-30T03:12:40.668557351Z',
+        },
+        sequenceNumber: 4,
+        severity: 'ERROR',
+        stage: 'Step 1',
+        timestamp: '2021-09-30T03:12:40.668557351Z',
+      },
+    ]);
+
+    const service = new TestRunService(recordService);
+    const testrun = service.get();
+
+    expect(testrun.steps['1'].failure).toBeTrue();
+    expect(testrun.failures).toEqual([
+      {
+        testStepId: '1',
+        testStepName: 'Measure InternodeBandwidth',
+        symptom: 'Measure InternodeBandwidth - bad-bandwidth',
+        message: 'Nothing really',
+        hardwareInfoId: ['0', '1'],
+      },
+    ]);
   });
 
   function buildMeasurement(element: results.MeasurementElement) {

@@ -1,0 +1,18 @@
+table.failures-table {
+  width: 100%;
+}
+
+.failures-table a.symptom-link {
+  color: #43a047;
+  cursor: pointer;
+}
+
+ul.info-list {
+  list-style-type: none;
+  padding: 0px;
+}
+
+li.info-list-item a {
+  color: #43a047;
+  cursor: pointer;
+}

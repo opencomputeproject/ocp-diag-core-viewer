@@ -9,6 +9,13 @@
   <!-- Parameters -->
   <parameters-viewer [parameters]="testrun.parameters"></parameters-viewer>
 
+  <!-- Failures -->
+  <ng-container *ngIf="failuresDataSource.data.length > 0">
+    <session-title-bar title="Failures" [badge]="failuresDataSource.data.length">
+    </session-title-bar>
+    <failures-table [dataSource]="failuresDataSource"></failures-table>
+  </ng-container>
+
   <!-- Errors title bar -->
   <session-title-bar title="Errors" [badge]="errorsDataSource.data.length">
   </session-title-bar>
