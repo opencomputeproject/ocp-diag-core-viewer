@@ -6,6 +6,9 @@
   <!-- Summary table -->
   <key-value-table [dataSource]="summary" id="summary-table"></key-value-table>
 
+  <!-- Parameters -->
+  <parameters-viewer [parameters]="testrun.parameters"></parameters-viewer>
+
   <!-- Errors title bar -->
   <session-title-bar title="Errors" [badge]="errorsDataSource.data.length">
   </session-title-bar>

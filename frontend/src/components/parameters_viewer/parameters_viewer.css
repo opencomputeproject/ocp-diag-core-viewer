@@ -1,0 +1,40 @@
+parameters-viewer .mat-expansion-panel.parameters-panel {
+  border-radius: 0;
+}
+
+parameters-viewer .mat-expansion-panel.parameters-panel .mat-expansion-panel-header.parameters-panel-header,
+parameters-viewer .mat-expansion-panel.parameters-panel .mat-expansion-panel-header.parameters-panel-header.mat-expanded {
+  background-color: #d3d3d3;
+  border-radius: 0;
+  color: inherit;
+  height: auto;
+  min-height: 32px;
+  padding: 4px 16px 4px 4px;
+}
+
+parameters-viewer .mat-expansion-panel.parameters-panel .mat-expansion-panel-header.parameters-panel-header:hover:not([aria-disabled='true']) {
+  background-color: #c8c8c8;
+}
+
+parameters-viewer .mat-expansion-panel.parameters-panel .mat-expansion-panel-header.parameters-panel-header .mat-expansion-panel-header-title {
+  color: inherit;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: normal;
+}
+
+parameters-viewer .parameters-collapsed-hint {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 13px;
+  padding: 8px 16px;
+}
+
+parameters-viewer .parameters-viewer {
+  overflow-x: auto;
+  padding: 12px 16px;
+}
+
+parameters-viewer .parameters-empty {
+  font-size: 14px;
+  padding: 16px;
+}

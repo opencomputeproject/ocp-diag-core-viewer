@@ -153,7 +153,7 @@ export class TestRunService {
   ): TestRun {
     testrun.name = testRunStart.name;
     testrun.version = testRunStart.version;
-    testrun.parameters = testRunStart.parameters;
+    testrun.parameters = testRunStart.parameters ?? {};
     testrun.startTime = record.raw.timestamp;
 
     for (const dut of testRunStart.dutInfo) {

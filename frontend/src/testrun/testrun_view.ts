@@ -89,7 +89,6 @@ export class TestRunViewComponent implements OnInit, OnDestroy {
       ['End Time', this.timezoneService.format(testrun.endTime)]);
     this.summary.push(
       ['Duration', calulateDurationOrShowMessage(testrun.startTime, testrun.endTime)]);
-    this.summary.push(['Parameters', testrun.parameters]);
   }
 
   private getHostNames(): string[] {
