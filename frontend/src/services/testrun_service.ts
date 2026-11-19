@@ -14,6 +14,15 @@ export type Software = results.SoftwareInfo & {
   hostname: string;
 };
 
+/** A FAIL diagnosis associated with its originating test step. */
+export interface Failure {
+  testStepId: string;
+  testStepName: string;
+  symptom: string;
+  message: string;
+  hardwareInfoId: string[];
+}
+
 /** Organized meltan testrun result */
 export class TestRun {
   name = "";
@@ -23,6 +32,7 @@ export class TestRun {
   result: results.Result = "NOT_APPLICABLE";
   status: results.Status = "UNKNOWN";
   parameters: object = {};
+  failures: Failure[] = [];
   errors: results.Error[] = [];
   tags: string[] = [];
   /** Maps testStepId to TestStep **/
@@ -217,10 +227,23 @@ export class TestRunService {
     }
 
     if (artifact.diagnosis) {
+      const step = testrun.steps[artifact.testStepId];
       if (artifact.diagnosis.type === "FAIL") {
-        testrun.steps[artifact.testStepId].failure = true;
+        step.failure = true;
+        const verdict = artifact.diagnosis.verdict ?? "";
+        const symptom =
+          step.name && verdict
+            ? `${step.name} - ${verdict}`
+            : step.name || verdict;
+        testrun.failures.push({
+          testStepId: step.testStepId,
+          testStepName: step.name,
+          symptom,
+          message: artifact.diagnosis.message ?? "",
+          hardwareInfoId: artifact.diagnosis.hardwareInfoId ?? [],
+        });
       }
-      testrun.steps[artifact.testStepId].diagnoses.push(artifact.diagnosis);
+      step.diagnoses.push(artifact.diagnosis);
       return testrun;
     }
 
