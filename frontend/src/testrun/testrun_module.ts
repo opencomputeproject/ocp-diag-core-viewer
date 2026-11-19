@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { ErrorsTableModule } from '../components/errors_table/errors_table_module';
 import { KeyValueTableModule } from '../components/key_value_table/key_value_table_module';
+import { ParametersViewerModule } from '../components/parameters_viewer/parameters_viewer_module';
 import { SessionTitleBarModule } from '../components/session_title_bar/session_title_bar_module';
 import { SummaryBarModule } from '../components/summary_bar/summary_bar_module';
 import { ToggleJsonViewerModule } from '../components/toggle_json_viewer/toggle_json_viewer_module';
@@ -27,6 +28,7 @@ import { TestRunViewComponent } from './testrun_view';
     MatTableModule,
     ErrorsTableModule,
     KeyValueTableModule,
+    ParametersViewerModule,
     SessionTitleBarModule,
     SummaryBarModule,
     ToggleJsonViewerModule,

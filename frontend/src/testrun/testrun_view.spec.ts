@@ -4,6 +4,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ErrorsTableComponent } from '../components/errors_table/errors_table';
+import { ParametersViewerComponent } from '../components/parameters_viewer/parameters_viewer';
 import { SessionTitleBarComponent } from '../components/session_title_bar/session_title_bar';
 import { ResultRecordService } from '../services/result_record_service';
 import { SideInfoService } from '../services/side_info_service';
@@ -114,15 +115,48 @@ describe('TestRunViewComponent Component', () => {
     expect(fixture.nativeElement.querySelector('#summary-table')).toBeTruthy();
   });
 
+  it('should have an empty parameters viewer', () => {
+    testRunService.get.and.returnValue(defaultTestRun);
+    fixture = TestBed.createComponent(TestRunViewComponent);
+    fixture.detectChanges();
+
+    const paramsEl =
+      fixture.debugElement.query(By.directive(ParametersViewerComponent));
+    expect(paramsEl).toBeTruthy();
+    expect(paramsEl.componentInstance.parameters).toEqual({});
+    expect(paramsEl.componentInstance.hasParameters).toBeFalse();
+  });
+
+  it('should pass testrun parameters to parameters viewer', () => {
+    const parameters = {
+      foo: 'bar',
+      count: 42,
+      nested: { a: 1 },
+    };
+    testRunService.get.and.returnValue({
+      ...defaultTestRun,
+      parameters,
+    });
+    fixture = TestBed.createComponent(TestRunViewComponent);
+    fixture.detectChanges();
+
+    const paramsEl =
+      fixture.debugElement.query(By.directive(ParametersViewerComponent));
+    expect(paramsEl).toBeTruthy();
+    expect(paramsEl.componentInstance.parameters).toEqual(parameters);
+    expect(paramsEl.componentInstance.hasParameters).toBeTrue();
+  });
+
   it('should have an empty errors table', () => {
     testRunService.get.and.returnValue(defaultTestRun);
     fixture = TestBed.createComponent(TestRunViewComponent);
     fixture.detectChanges();
 
     // Badge should be 0.
-    const titleBarEl =
-      fixture.debugElement.query(By.directive(SessionTitleBarComponent));
-    expect(titleBarEl.componentInstance.badge).toBe(0);
+    const titleBarEl = fixture.debugElement
+      .queryAll(By.directive(SessionTitleBarComponent))
+      .find(el => el.componentInstance.title === 'Errors');
+    expect(titleBarEl?.componentInstance.badge).toBe(0);
 
     // Empty error table.
     const tableEl = fixture.debugElement.query(By.directive(ErrorsTableComponent));
@@ -169,9 +203,10 @@ describe('TestRunViewComponent Component', () => {
     fixture.detectChanges();
 
     // Badge should be 2.
-    const titleBarEl =
-      fixture.debugElement.query(By.directive(SessionTitleBarComponent));
-    expect(titleBarEl.componentInstance.badge).toBe(2);
+    const titleBarEl = fixture.debugElement
+      .queryAll(By.directive(SessionTitleBarComponent))
+      .find(el => el.componentInstance.title === 'Errors');
+    expect(titleBarEl?.componentInstance.badge).toBe(2);
 
     // There are 2 rows in table.
     const tableEl = fixture.debugElement.query(By.directive(ErrorsTableComponent));
